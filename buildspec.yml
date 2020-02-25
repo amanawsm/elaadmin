@@ -1,0 +1,97 @@
+version: 0.2
+
+env:
+  variables:
+     # key: "value"
+     AWS_DEFAULT_REGION:"us-east-1"
+     AWS_ACCOUNT_ID:"200286560453"
+     IMAGE_TAG:"rootertest"
+     IMAGE_REPO_NAME:"rootertest"
+     DJANGO_SECRET_KEY:"e*!v-fls)((zat1vycj3-pyo=ln^k-_2e#ngtthl2=n!7-wdcr"
+     DEBUG:"False"
+     POSTGRES_DATABASE:"rooter"
+     POSTGRES_USER:"postgres"
+     POSTGRES_PASSWORD:"mind@123"
+     POSTGRES_HOST:"db"
+     POSTGRES_PORT:"5432"
+     PGADMIN_DEFAULT_EMAIL:"singhaman@seasiainfotech.com"
+     PGADMIN_DEFAULT_PASSWORD:"mind@123"
+  #parameter-store:
+     # key: "value"
+     # key: "value"
+  #secrets-manager:
+     # key: secret-id:json-key:version-stage:version-id
+     # key: secret-id:json-key:version-stage:version-id
+  exported-variables:
+     # - variable
+     - export AWS_DEFAULT_REGION
+     - export AWS_ACCOUNT_ID
+     - export IMAGE_TAG
+     - export IMAGE_REPO_NAME
+     - export DJANGO_SECRET_KEY
+     - export DEBUG
+     - export POSTGRES_DATABASE
+     - export POSTGRES_PASSWORD
+     - export POSTGRES_HOST
+     - export PGADMIN_DEFAULT_EMAIL
+     - export PGADMIN_DEFAULT_PASSWORD
+  #git-credential-helper: yes
+  phases:
+    install:
+      runtime-versions:
+        docker: 18
+    pre_build:
+      commands:
+        - echo Logging in to Amazon ECR...
+        - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+    build:
+      commands:
+        - echo Build started on `date`
+        - echo Building the Docker image...          
+        - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+        - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
+    post_build:
+      commands:
+        - echo Build completed on `date`
+        - echo Pushing the Docker image...
+        - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+# phases:
+#   install:
+    #If you use the Ubuntu standard image 2.0 or later, you must specify runtime-versions.
+    #If you specify runtime-versions and use an image other than Ubuntu standard image 2.0, the build fails.
+    #runtime-versions:
+      # name: version
+      # name: version
+    #commands:
+      # - command
+      # - command
+  #pre_build:
+    #commands:
+      # - command
+      # - command
+#   build:
+#     commands:
+      # - command
+      # - command
+  #post_build:
+    #commands:
+      # - command
+      # - command
+#reports:
+  #report-name-or-arn:
+    #files:
+      # - location
+      # - location
+    #base-directory: location
+    #discard-paths: yes
+    #file-format: JunitXml | CucumberJson
+#artifacts:
+  #files:
+    # - location
+    # - location
+  #name: $(date +%Y-%m-%d)
+  #discard-paths: yes
+  #base-directory: location
+#cache:
+  #paths:
+    # - paths
