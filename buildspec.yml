@@ -20,3 +20,6 @@ phases:
       - echo printenv | tee -a log.txt
       - printenv | tee -a log.txt
       
+artifacts:
+  files:
+    - '**/*'
