@@ -1,4 +1,4 @@
-cd /home/ubuntu/hyla-root/
+
 
 sudo docker ps
 sudo docker build .
