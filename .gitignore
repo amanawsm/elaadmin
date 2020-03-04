@@ -1,0 +1,11 @@
+.idea
+/venv
+
+*.pyc
+*.log
+/media
+.env
+
+.vscode
+.history
+/static

@@ -12,9 +12,9 @@ python manage.py makemigrations
 echo "Apply database migrations"
 python manage.py migrate
 
-# #Load dummy data
-# echo 'creating dummy data'
-# python manage.py loaddata db.json
+#Load dummy data
+echo 'creating dummy data'
+python manage.py loaddata db.json
 
 # Start server
 echo "Starting server"

@@ -12,13 +12,12 @@ class chatServices():
             queryset = chatModel.objects.filter(normal=normal_id)
             print(len(queryset))
             serializer = chatSerializer(queryset, many=True)            
-            data = serializer.data             
+            data = serializer.data                        
             result = {'data':data, 'code':HTTP_200_OK, 'message':OK}
         elif deployment_id:
             queryset = chatModel.objects.filter(deployment=deployment_id)
             serializer = chatSerializer(queryset, many=True)
-            data = serializer.data
-            del data['normal']           
+            data = serializer.data                    
             result = {'data':data, 'code':HTTP_200_OK, 'message':OK}
         else:
             data = {'error':'please use valid parameters'}

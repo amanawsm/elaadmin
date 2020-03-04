@@ -25,6 +25,7 @@ class userViewServices():
             else:
                 if user_instance[0].check_password(password):                    
                     result['password'] = password
+                    result['id'] = user_instance[0].id
                     result['email'] = user_instance[0].email
                     result['first_name'] = user_instance[0].first_name
                     result['last_name'] = user_instance[0].last_name  
@@ -121,6 +122,30 @@ class userViewServices():
         logout(request)
         result = {'code':HTTP_200_OK, 'message':OK}  
         return result      
+
+    def getAllusers(request):
+        """
+        This method is used to retreive all users.
+        """
+        role = request.data.get('role',None)
+        if role:
+            users = User.objects.filter(role=role)
+        else:
+            users = User.objects.all()
+        data = []
+        for user in users:
+            id = user.id
+            email = user.email
+            first_name = user.first_name
+            last_name = user.last_name
+            role = user.role.name
+            data.append({
+                'id':id, 'email':email,'first_name':first_name,
+                'last_name':last_name,'role':role
+            })
+        return data
+
+
         
             
             

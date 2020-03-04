@@ -29,7 +29,7 @@ class retrieveNormalRequest(APIView):
     This API is used to fetched the records
     """
     permission_classes = [IsAuthenticated]
-    def get(self, request, format=None):
+    def post(self, request, format=None):        
         data = requestsService.getNormalRequest(request)        
         return Response(data, status=HTTP_200_OK)
 

@@ -3,7 +3,8 @@ from baserooter.models import  deploymentRequest,programVersion,requestNormal
 from baserooter.utils import *
 from rest_framework.status import *
 from baserooter.utils import CustomPagination
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 
@@ -62,34 +63,44 @@ class requestsService():
     def createDeploymentRequest(request):
         """
         This method is used to create deployment requests.
-        """        
-        requested_branch = {}
-        version_id = request.data.get('program_version')
-        new_version = request.data.get('version')
-        requested_by = request.data.get('requested_by')
-        description = request.data.get('description')
-        technician_id = request.data.get('technician_id')
-        status_type = request.data.get('status')
-        version_instance = programVersion.objects.get(id=int(version_id))
-        old_version = version_instance.name
-        app_id = version_instance.application.id
-        program_id = version_instance.application.program.id
-        app_type_id = version_instance.application.program.application_type.id
-        env_id = version_instance.application.program.environment.id
-        requested_branch.update({
-            'env_id':env_id,'app_type_id':app_type_id,
-            'program_id':program_id,'app_id':app_id,'version_id':version_id,
-            'old_version':old_version, 'new_version':new_version
-        })
-        data = {'program_version':version_id,'requested_branch':str(requested_branch),'requested_by':requested_by,'description':description,'technician_id':technician_id,'status':status_type}
-        serializer = requestDeploySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            result = {'data':serializer.data, 'code':HTTP_201_CREATED, 'message':OK}
-        else:
-            result = {'data':serializer.errors, 'code':HTTP_201_CREATED, 'message':OK}
+        """  
+        data_len = request.data.get('data',None)
+        print("data_len -> ",data_len)
+        final_result = []
+        for request_data in data_len:
+            requested_branch = {}
+            version_id = request_data['version_id']
+            new_version = request_data['version']
+            requested_by = request_data['requested_by']
+            description = request_data['description']
+            technician_id = request_data['technician_id']
+            status_type = request_data['status']
+            version_instance = programVersion.objects.get(id=int(version_id))
+            old_version = version_instance.name
+            app_id = version_instance.application.id
+            app_name = version_instance.application.name
+            program_id = version_instance.application.program.id
+            program_name = version_instance.application.program.name
+            app_type_id = version_instance.application.program.application_type.id
+            app_type_name = version_instance.application.program.application_type.name
+            env_id = version_instance.application.program.environment.id
+            env_name = version_instance.application.program.environment.name
+            
+            requested_branch.update({
+                'env_id':env_id,'env_name':env_name,'app_type_id':app_type_id,'app_type_name':app_type_name,
+                'program_id':program_id,'program_name':program_name,'app_id':app_id,'app_name':app_name,'version_id':version_id,
+                'old_version':old_version, 'new_version':new_version
+            })
+            data = {'program_version':version_id,'requested_branch':str(requested_branch),'requested_by':requested_by,'description':description,'technician_id':technician_id,'status':status_type}
+            serializer = requestDeploySerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                result = {'data':serializer.data, 'code':HTTP_201_CREATED, 'message':OK}
+            else:
+                result = {'data':serializer.errors, 'code':HTTP_201_CREATED, 'message':OK}
+            final_result.append(result)
 
-        return result  
+        return final_result  
 
     def getDeploymentRequest(request):
         """
@@ -106,6 +117,15 @@ class requestsService():
             
             for data1 in data['response_data']:
                 data1['requested_branch'] =eval(data1['requested_branch'])
+                try:
+                    tech_instance = User.objects.get(id=data1['technician_id'])
+                    tech_first_name = str(tech_instance.first_name)
+                    tech_role = tech_instance.role.name
+                    tech_email = tech_instance.email
+                    tech_details = {'id':data1['technician_id'],'name':tech_first_name,'email':tech_email,'role':tech_role}
+                except:
+                    tech_details = {'error':'technician details not exists'}
+                data1['technician_id'] = tech_details
               
             result = {'data':data['response_data'],'total_records':data['total_records'], 'code':HTTP_200_OK, 'message':OK}
         return result  
@@ -137,4 +157,20 @@ class requestsService():
         else:
             result = {'code':HTTP_200_OK, 'message':DETAILS_INCORRECT}
         return result
-            
+    def updateProgramVersion(request):
+        env_name = request.data.get('env_name',None)
+        app_type_name = request.data.get('app_type_name',None)
+        program_name = request.data.get('program_name',None)
+        app_name = request.data.get('app_name',None)
+        version = request.data.get('version',None)
+        
+        if env_name and app_type_name and program_name and app_name and version:
+            version_instance = programVersion.objects.filter(application__program__environment_name=env_name, application__program__application_type_name=app_type__name,application__program_name=program_name,application_name=app_name)
+            print("version_instance : ",version_instance)
+            version_id = version_instance[0].id
+            print("version_id : ",version_id)
+            program_version = programVersion.objects.get(id=version_id)
+            print(program_version.name)
+            program_version.name = str(version)
+            program_version.save()
+

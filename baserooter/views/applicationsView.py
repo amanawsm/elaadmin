@@ -22,3 +22,27 @@ class getApplications(APIView):
         return Response(data, status=HTTP_200_OK)
 
 
+class getAppdataView(APIView):
+    """
+    This API is used to retrieve all applications using environment and application_type parameters.
+    """
+    permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+        data = applicationsViewServices.getAppdataService(request)
+        return Response(data, status=HTTP_200_OK)
+class getProgramDataView(APIView):
+    """
+    This API is used to retrieve all applications using environment and application_type parameters.
+    """
+    permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+        data = applicationsViewServices.getProgramData(request)
+        return Response(data, status=HTTP_200_OK)
+
+class updateProgramVersion(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+        data = applicationsViewServices.updateProgramVersion(request)
+        return Response(data, status=HTTP_200_OK)
+
+

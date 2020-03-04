@@ -13,6 +13,7 @@ urlpatterns = [
     path('login',bviews.loginUserView.as_view(), name= 'login'),
     path('password/update',bviews.updatePasswordView.as_view(), name= 'password-update'),
     path('logout',bviews.logoutView.as_view(), name= 'logout'),
+    path('all-users',bviews.getAllusers.as_view(), name= 'all-users'),
 
     # environment views
     path('get-environments',bviews.environmentView.as_view(),name='get-environments'),
@@ -22,6 +23,9 @@ urlpatterns = [
     
     # applications views
     path('get-applications',bviews.getApplications.as_view(),name="get-application"), 
+    path('get-app-data',bviews.getAppdataView.as_view(),name="get-app-data"),
+    path('get-program-data',bviews.getProgramDataView.as_view(),name="get-program-data"),
+    path('update-program-version',bviews.updateProgramVersion.as_view(),name="get-program-data"),
 
     # normal requests view
     path('create-normal-request',bviews.createNormalRequest.as_view(), name='create-normal-requests'),

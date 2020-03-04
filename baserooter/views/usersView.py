@@ -65,3 +65,11 @@ class logoutView(APIView):
         data = userViewServices.logoutUser(request)
         return Response(data, status=HTTP_200_OK)
 
+class getAllusers(APIView):
+    """
+    This APi is provide list of all users.
+    """
+    permission_classes = [IsAuthenticated]
+    def post(self, request,format=None):
+        data = userViewServices.getAllusers(request)
+        return Response(data, status=HTTP_200_OK)

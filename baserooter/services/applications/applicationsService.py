@@ -89,16 +89,59 @@ class applicationsViewServices():
 
         else:
             result = {'code':HTTP_400_BAD_REQUEST, 'message':DETAILS_INCORRECT}
-        return result
-    
-
-    
+        return result   
+   
                 
+    def getAppdataService(request):
+        env_id = request.data.get('env_id',None)
+        app_type_id = request.data.get('app_type_id',None)
+        app_instance = Application.objects.filter(program__environment=env_id,program__application_type=app_type_id)
+        data = []
+        app_name = []
+        for instance in app_instance:
+            id = instance.id
+            name = instance.name
+            if str(name) not in app_name:
+                app_name.append(name)
+                data.append({'id':id, 'name':name})
+            else:
+                pass
         
-    
-    
+        result = {'data':data, 'code':HTTP_200_OK, 'message':OK}
+        return result
 
+    def getProgramData(request):
+        env_id = request.data.get('env_id',None)
+        app_type_id = request.data.get('app_type_id',None)
+        app_name = request.data.get('app_name',None)
+        program_instance = programVersion.objects.filter(application__program__environment=env_id, application__program__application_type=app_type_id)
+        data = []
+        for instance in program_instance:
+            version_id = instance.id
+            version = instance.name
+            app_names = instance.application.name           
+            program_id = instance.application.program.id
+            program_name = instance.application.program.name
+            if app_names == app_name:
+                data.append({'program_id':program_id, 'program_name':program_name,
+                    'version_id':version_id, 'version':version
+                })
+        result = {'data':data, 'code':HTTP_200_OK, 'message':OK}
+        return result
 
-
-
-    
+    def updateProgramVersion(request):
+        env_name = request.data.get('env_name',None)
+        app_type_name = request.data.get('app_type_name',None)
+        program_name = request.data.get('program_name',None)
+        app_name = request.data.get('app_name',None)
+        version = request.data.get('version',None)
+        
+        if env_name and app_type_name and program_name and app_name and version:
+            version_instance = programVersion.objects.filter(application__program__environment_name=env_name, application__program__application_type_name=app_type__name,application__program_name=program_name,application_name=app_name)
+            print("version_instance : ",version_instance)
+            version_id = version_instance[0].id
+            print("version_id : ",version_id)
+            program_version = programVersion.objects.get(id=version_id)
+            print(program_version.name)
+            # program_version.name = str(version)
+            # program_version.save()

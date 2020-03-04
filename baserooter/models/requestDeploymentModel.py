@@ -5,7 +5,7 @@ from baserooter.models import programVersion
 class deploymentRequest(models.Model):    
     id = models.AutoField(primary_key=True)
     program_version = models.ForeignKey(programVersion,on_delete=models.CASCADE, related_name='program_version',blank=True,null=True)
-    requested_branch = models.CharField(max_length=200)    
+    requested_branch = models.CharField(max_length=2000)    
     requested_by = models.CharField(max_length=100)  
     description = models.CharField(max_length=1000)
     technician_id = models.IntegerField()

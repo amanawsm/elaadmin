@@ -1,25 +1,20 @@
 version: 0.2
 
 phases:
-    install:
-      runtime-versions:
-        docker: 18
-    pre_build:
-      commands:      
-      - $(aws ecr get-login --region $AWS_DEFAULT_REGION  --no-include-email)
-      - echo Pulling Docker Images for cache ... | tee -a log.txt
-      - docker-compose pull --ignore-pull-failures --parallel 2>&1 | tee -a log.txt
-    build:
-      commands:
-      - echo Building the Docker image ... | tee -a log.txt
-      - docker-compose build 2>&1 | tee -a log.txt
-    post_build:
-      commands:
-      - echo Pushing the Docker image ... | tee -a log.txt
-      - docker-compose push 2>&1 | tee -a log.txt
-      - echo printenv | tee -a log.txt
-      - printenv | tee -a log.txt
+  pre_build:
+    commands:
+      - echo "Before running tests"
+      - pip3 install -r requirements.txt
       
+  build:
+    commands:
+      - echo "Creating dummy data into database"
+  post_build:
+    commands:
+      - echo Build completed on `date`
 artifacts:
   files:
     - '**/*'
+cache:
+  paths:
+    - '/root/.cache/pip/**/*'

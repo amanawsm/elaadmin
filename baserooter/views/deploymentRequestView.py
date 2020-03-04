@@ -30,7 +30,7 @@ class getDeploymentRequest(APIView):
     This API is used to retreive all deployment requests.
     """
     permission_classes = (IsAuthenticated,)
-    def get(self,request, format=None):
+    def post(self,request, format=None):
         data = requestsService.getDeploymentRequest(request)
         return Response(data, status=HTTP_200_OK)
 
